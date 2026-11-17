@@ -30,8 +30,8 @@ const lamps = [-54, -27, 0, 27, 54]
   .join('')
 
 const STYLE = `
-:root{--sky0:#0d0726;--sky1:#2a1060;--sky2:#7b1f73;--hill0:#24114d;--hill1:#170a36;--orb:#ffe7a3;--alien:#3ddc84;--stars:1;--rays:0;--clouds:0}
-@media (prefers-color-scheme:light){:root{--sky0:#7cc8ff;--sky1:#b9e4ff;--sky2:#ffd9ec;--hill0:#8fdc7f;--hill1:#5fc16b;--orb:#ffd23f;--alien:#a05cff;--stars:0;--rays:1;--clouds:.9}}
+:root{--sky0:#0d0726;--sky1:#2a1060;--sky2:#7b1f73;--hill0:#24114d;--hill1:#170a36;--orb:#ffe7a3;--alien:#3ddc84;--alien-d:#1fae63;--alien-l:#a6f7c6;--stars:1;--rays:0;--clouds:0}
+@media (prefers-color-scheme:light){:root{--sky0:#7cc8ff;--sky1:#b9e4ff;--sky2:#ffd9ec;--hill0:#8fdc7f;--hill1:#5fc16b;--orb:#ffd23f;--alien:#a05cff;--alien-d:#7a3fe0;--alien-l:#d4b8ff;--stars:0;--rays:1;--clouds:.9}}
 text{font-family:ui-rounded,'Arial Rounded MT Bold',system-ui,sans-serif;font-weight:800;fill:#fff;stroke:${INK};stroke-width:1.5;paint-order:stroke}
 .tw{fill:#fff;animation:tw 3s ease-in-out infinite alternate}
 .t1{animation-duration:2.2s;animation-delay:-1s}.t2{animation-duration:4.1s;animation-delay:-2s}.t3{animation-duration:5.3s;animation-delay:-.5s}
@@ -65,10 +65,16 @@ text{font-family:ui-rounded,'Arial Rounded MT Bold',system-ui,sans-serif;font-we
 @keyframes moo{0%,25%{opacity:0}27%,36%{opacity:1}38%,100%{opacity:0}}
 .yay{animation:yay 30s linear infinite}
 @keyframes yay{0%,56%{opacity:0;transform:scale(.4)}59%{opacity:1;transform:scale(1.25)}61%,68%{opacity:1;transform:scale(1)}71%,100%{opacity:0;transform:scale(1)}}
-.peek{transform:translateY(95px);animation:peek 17s ease-in-out infinite}
-@keyframes peek{0%,50%{transform:translateY(95px)}56%{transform:translateY(-6px)}58%,80%{transform:translateY(0)}86%,100%{transform:translateY(95px)}}
-.wave{animation:wave .5s ease-in-out infinite alternate}
-@keyframes wave{from{transform:rotate(-25deg)}to{transform:rotate(30deg)}}
+.peek{transform:translateY(140px);animation:peek 17s ease-in-out infinite}
+@keyframes peek{0%,50%{transform:translateY(140px)}56%{transform:translateY(-8px)}59%{transform:translateY(3px)}61%,80%{transform:translateY(0)}86%,100%{transform:translateY(140px)}}
+.tilt{animation:tilt 1.8s ease-in-out infinite alternate}
+@keyframes tilt{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+.wave{animation:wave .45s ease-in-out infinite alternate}
+@keyframes wave{from{transform:rotate(-18deg)}to{transform:rotate(22deg)}}
+.glow{animation:glow 1.4s ease-in-out infinite alternate}
+@keyframes glow{from{transform:scale(.7);opacity:.15}to{transform:scale(1.25);opacity:.5}}
+.hi{opacity:0;animation:hi 17s linear infinite}
+@keyframes hi{0%,60%{opacity:0;transform:scale(.4)}63%{opacity:1;transform:scale(1.2)}65%,78%{opacity:1;transform:scale(1)}81%,100%{opacity:0;transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 `
 
@@ -96,15 +102,26 @@ const ORB = `
 </g></g>
 `
 
+const eye = (x, lean) =>
+  `<g transform="translate(${x},-8) rotate(${lean})"><g class="blink"><ellipse rx="11" ry="15" fill="${INK}"/><circle cx="-3" cy="-6" r="3.6" fill="#fff"/><circle cx="3" cy="5" r="1.8" fill="#fff" opacity=".8"/></g></g>`
+
+const antenna = side =>
+  `<path d="M${side * 14},-48 Q${side * 22},-70 ${side * 30},-74" fill="none" style="stroke:var(--alien-d)" stroke-width="4" stroke-linecap="round"/><g transform="translate(${side * 30},-77)"><circle class="glow" r="11" fill="#ffd23f" opacity=".35"/><circle r="6" fill="#ffd23f"/></g>`
+
 const ALIEN = `
-<g transform="translate(250,722)"><g class="peek">
-<g style="stroke:var(--alien)" stroke-width="4" stroke-linecap="round"><line x1="-10" y1="-28" x2="-18" y2="-52"/><line x1="10" y1="-28" x2="18" y2="-52"/></g>
-<circle cx="-18" cy="-54" r="5" fill="#ff4fa3"/><circle cx="18" cy="-54" r="5" fill="#ff4fa3"/>
-<g transform="translate(32,2)"><g class="wave"><rect x="-4" y="-36" width="8" height="38" rx="4" style="fill:var(--alien)"/></g></g>
-<ellipse rx="28" ry="34" style="fill:var(--alien)"/>
-<ellipse cx="-10" cy="-8" rx="8" ry="10" fill="#fff"/><ellipse cx="10" cy="-8" rx="8" ry="10" fill="#fff"/>
-<circle cx="-9" cy="-6" r="4" fill="${INK}"/><circle cx="11" cy="-6" r="4" fill="${INK}"/>
-<path d="M-8,12 Q0,20 8,12" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
+<g transform="translate(250,688) scale(1.4)"><g class="peek">
+<g transform="translate(0,34)"><g class="tilt"><g transform="translate(0,-34)">
+<rect x="-22" y="20" width="44" height="60" rx="18" style="fill:var(--alien-d)"/>
+<path d="M-24,32 Q-40,42 -38,60" fill="none" style="stroke:var(--alien-d)" stroke-width="9" stroke-linecap="round"/>
+<g transform="translate(30,30)"><g class="wave"><path d="M0,0 Q24,-2 32,-34" fill="none" style="stroke:var(--alien)" stroke-width="9" stroke-linecap="round"/><g style="fill:var(--alien)"><circle cx="32" cy="-40" r="9"/><circle cx="23" cy="-47" r="4"/><circle cx="32" cy="-52" r="4"/><circle cx="41" cy="-47" r="4"/></g></g></g>
+${antenna(-1)}${antenna(1)}
+<path d="M0,-52 C30,-52 44,-30 44,-8 C44,16 24,30 0,30 C-24,30 -44,16 -44,-8 C-44,-30 -30,-52 0,-52Z" style="fill:var(--alien)"/>
+<ellipse cx="-17" cy="-38" rx="13" ry="6" transform="rotate(-24 -17 -38)" style="fill:var(--alien-l)" opacity=".7"/>
+${eye(-18, 16)}${eye(18, -16)}
+<g fill="#ff7aa8" opacity=".5"><circle cx="-32" cy="10" r="6"/><circle cx="32" cy="10" r="6"/></g>
+<path d="M-10,13 Q0,27 10,13Z" fill="${INK}"/><ellipse cy="20" rx="4" ry="2.4" fill="#ff7aa8"/>
+</g></g></g>
+<g transform="translate(88,-74)"><text class="hi" font-size="26" text-anchor="middle">hi!</text></g>
 </g></g>
 `
 
