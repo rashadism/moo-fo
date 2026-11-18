@@ -98,11 +98,9 @@ text{font-family:ui-rounded,'Arial Rounded MT Bold',system-ui,sans-serif;font-we
 @keyframes shock{0%,26%{transform:scale(1)}28%,54%{transform:scale(1.5)}56%,100%{transform:scale(1)}}
 .tail{animation:tail 1.1s ease-in-out infinite alternate}
 @keyframes tail{from{transform:rotate(-12deg)}to{transform:rotate(18deg)}}
-.moo,.yay{opacity:0}
+.moo{opacity:0}
 .moo{animation:moo 30s linear infinite}
 @keyframes moo{0%,25%{opacity:0}27%,36%{opacity:1}38%,100%{opacity:0}}
-.yay{animation:yay 30s linear infinite}
-@keyframes yay{0%,56%{opacity:0;transform:scale(.4)}59%{opacity:1;transform:scale(1.25)}61%,68%{opacity:1;transform:scale(1)}71%,100%{opacity:0;transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 `
 
@@ -179,7 +177,6 @@ ${lamps}
 <path d="M-29,-22 C-26,-36 -16,-43 -6,-45" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/>
 <line y1="-45" y2="-60" stroke="#8f86c9" stroke-width="3"/><circle class="lamp l2" cy="-63" r="4.5"/>
 </g>
-<g transform="translate(0,-104)"><text class="yay" font-size="40" text-anchor="middle">yay!</text></g>
 </g></g></g>
 `
 
