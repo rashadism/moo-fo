@@ -2,9 +2,9 @@
 
 A theme for the Claude desktop and mobile apps. Deep violet panels, hot pink and cyan accents, and a backdrop that moves.
 
-Every 30 seconds a flying saucer swoops in over a cow on a hill. The cow says "moo?!", gets beamed up spinning, and the saucer shouts "yay!" and leaves. Another cow wanders in. Meanwhile the moon winks, stars twinkle, and a small alien pops up from behind the hill to wave.
+Every 30 seconds a flying saucer swoops in over a cow on a hill. The cow says "moo?!", gets beamed up spinning, and the saucer shouts "yay!" and leaves. Another cow wanders in. Meanwhile the moon glows, stars twinkle, and now and then one shoots past.
 
-In light mode the moon becomes a sun and the sky turns blue. The scene follows the system's light or dark setting and stops moving when reduced motion is on.
+In light mode the moon becomes a sun with slowly turning rays and the sky turns blue. The scene follows the system's light or dark setting and stops moving when reduced motion is on.
 
 ## Install
 
