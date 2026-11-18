@@ -27,19 +27,37 @@ const HILL = [
   ],
 ]
 
-const COWS = [
-  { id: 'a', depth: 10, start: 150, faces: -1, moves: [[80, 88, -90, 150]], lift: [47, 150] },
+const SAUCERS = [
   {
-    id: 'b',
-    depth: 26,
-    start: 560,
-    faces: 1,
-    moves: [
-      [20, 38, 560, -90],
-      [72, 100, 1690, 560],
-    ],
+    id: 'u',
+    lean: 0,
+    bob: 3.2,
+    hull: ['#fff', '#d9d3f7', '#a79fdb'],
+    bowl: ['#8f86c9', '#4f477f'],
+    rim: '#5d5599',
+    collar: '#6f67b0',
+    pilot: '#3ddc84',
+    beam: '#b6ff8a',
+    glow: '#f6ffdf',
   },
-  { id: 'c', depth: 14, start: 1040, faces: 1, moves: [[40, 56, 1690, 1040]], lift: [14, 1040] },
+  {
+    id: 'v',
+    lean: 1,
+    bob: 2.7,
+    hull: ['#fff', '#ffd6e4', '#f0a3c0'],
+    bowl: ['#d87aa0', '#7d3f5c'],
+    rim: '#8a4566',
+    collar: '#b0607f',
+    pilot: '#b58cff',
+    beam: '#ffb3e6',
+    glow: '#fff0fa',
+  },
+]
+
+const COWS = [
+  { id: 'a', depth: 10, start: 150, faces: -1, moves: [[80, 88, -90, 150]], lift: [47, 150, 'v'] },
+  { id: 'b', depth: 26, start: 560, faces: 1, moves: [[72, 100, 1690, 560]], lift: [26, 560, 'v'] },
+  { id: 'c', depth: 14, start: 1040, faces: 1, moves: [[40, 56, 1690, 1040]], lift: [14, 1040, 'u'] },
   {
     id: 'd',
     depth: 20,
@@ -49,7 +67,7 @@ const COWS = [
       [60, 68, 1340, 1200],
       [108, 118, 1690, 1340],
     ],
-    lift: [93, 1200],
+    lift: [93, 1200, 'u'],
   },
   {
     id: 'e',
@@ -58,7 +76,18 @@ const COWS = [
     faces: -1,
     moves: [
       [30, 40, 800, 700],
-      [76, 84, 700, 800],
+      [96, 116, -90, 800],
+    ],
+    lift: [52, 700, 'u'],
+  },
+  {
+    id: 'f',
+    depth: 18,
+    start: 1690,
+    faces: 1,
+    moves: [
+      [62, 80, 1690, 920],
+      [100, 119, 920, -90],
     ],
   },
 ]
@@ -194,22 +223,37 @@ const cowStyle = cow => `
 .k${cow.id}{animation:k${cow.id} ${LOOP}s linear infinite}
 @keyframes k${cow.id}{${stride(cow)}}${lifting(cow)}`
 
-const VISITS = COWS.filter(cow => cow.lift)
-  .map(cow => ({ t: cow.lift[0], x: cow.lift[1], y: Math.round(hillY(cow.lift[1]) + cow.depth - BEAM) }))
-  .sort((a, b) => a.t - b.t)
-  .map((visit, i) => ({ ...visit, side: i % 2 === 0 ? -1 : 1 }))
+const visitsOf = saucer =>
+  COWS.filter(cow => cow.lift && cow.lift[2] === saucer.id)
+    .map(cow => ({ t: cow.lift[0], x: cow.lift[1], y: Math.round(hillY(cow.lift[1]) + cow.depth - BEAM) }))
+    .sort((a, b) => a.t - b.t)
+    .map((visit, i) => ({ ...visit, side: (i + saucer.lean) % 2 === 0 ? -1 : 1 }))
 
 const enter = v => `{transform:translate(${v.x + v.side * 700}px,-260px) rotate(${-v.side * 10}deg)}`
 const hover = v => `{transform:translate(${v.x}px,${v.y}px) rotate(0deg)}`
 const leave = v => `{transform:translate(${v.x - v.side * 700}px,-300px) rotate(${-v.side * 12}deg)}`
 
-const FLIGHT = `0%${enter(VISITS[0])}${VISITS.map(
-  v => `${at(v.t - 8)}${enter(v)}${at(v.t - 1.5)},${at(v.t + 7.5)}${hover(v)}${at(v.t + 11)}${leave(v)}`,
-).join('')}100%${enter(VISITS[0])}`
+const saucerStyle = saucer => {
+  const visits = visitsOf(saucer)
+  const flight = visits
+    .map(v => `${at(v.t - 8)}${enter(v)}${at(v.t - 1.5)},${at(v.t + 7.5)}${hover(v)}${at(v.t + 11)}${leave(v)}`)
+    .join('')
+  const beaming = visits
+    .map(v => `${at(v.t - 0.3)}{opacity:0}${at(v.t + 0.3)},${at(v.t + 6.3)}{opacity:1}${at(v.t + 6.9)}{opacity:0}`)
+    .join('')
 
-const BEAMING = `0%{opacity:0}${VISITS.map(
-  v => `${at(v.t - 0.3)}{opacity:0}${at(v.t + 0.3)},${at(v.t + 6.3)}{opacity:1}${at(v.t + 6.9)}{opacity:0}`,
-).join('')}100%{opacity:0}`
+  return `
+.w${saucer.id}{animation:w${saucer.id} ${LOOP}s ease-in-out infinite}
+@keyframes w${saucer.id}{0%${enter(visits[0])}${flight}100%${enter(visits[0])}}
+.b${saucer.id}{animation:b${saucer.id} ${LOOP}s linear infinite}
+@keyframes b${saucer.id}{0%{opacity:0}${beaming}100%{opacity:0}}`
+}
+
+const saucerDefs = s => `
+<linearGradient id="ray${s.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.beam}" stop-opacity=".6"/><stop offset="1" stop-color="${s.beam}" stop-opacity=".05"/></linearGradient>
+<linearGradient id="core${s.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.glow}" stop-opacity=".55"/><stop offset="1" stop-color="${s.glow}" stop-opacity="0"/></linearGradient>
+<linearGradient id="hull${s.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.hull[0]}"/><stop offset=".5" stop-color="${s.hull[1]}"/><stop offset="1" stop-color="${s.hull[2]}"/></linearGradient>
+<linearGradient id="bowl${s.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.bowl[0]}"/><stop offset="1" stop-color="${s.bowl[1]}"/></linearGradient>`
 
 const cowLeg = (id, x, fill, mirror) =>
   `<g transform="translate(${x},12)${mirror ? ' scale(-1,1)' : ''}"><g class="k${id}"><rect x="-5" width="10" height="28" rx="4.5" fill="${fill}"/><rect x="-5" y="21" width="10" height="7" rx="2.5" fill="${INK}"/></g></g>`
@@ -260,8 +304,8 @@ const lamps = [
   )
   .join('')
 
-const ring = extra =>
-  `<g class="ring ${extra}"><ellipse rx="82" ry="9" fill="none" stroke="#eaffc9" stroke-width="3"/></g>`
+const ring = (s, extra) =>
+  `<g class="ring ${extra}"><ellipse rx="82" ry="9" fill="none" stroke="${s.glow}" stroke-width="3"/></g>`
 
 const pilotEye = side =>
   `<ellipse cx="${side * 6}" cy="-1" rx="4" ry="5.5" transform="rotate(${side * -14} ${side * 6} -1)" fill="${INK}"/><circle cx="${side * 6 - 1}" cy="-3" r="1.3" fill="#fff"/>`
@@ -282,10 +326,7 @@ const STYLE = `
 @keyframes drift{from{transform:translateX(-300px)}to{transform:translateX(1900px)}}
 .shoot{opacity:0;animation:shoot 11s linear infinite}
 @keyframes shoot{0%,80%{transform:translateX(-300px);opacity:0}83%{opacity:1}92%,100%{transform:translateX(700px);opacity:0}}
-.ufo{animation:ufo ${LOOP}s ease-in-out infinite}
-@keyframes ufo{${FLIGHT}}
-.beam{opacity:0;animation:beam ${LOOP}s linear infinite}
-@keyframes beam{${BEAMING}}
+.beam{opacity:0}${SAUCERS.map(saucerStyle).join('')}
 .ring{opacity:0;animation:ring 2.8s linear infinite}.r2{animation-delay:-.93s}.r3{animation-delay:-1.87s}
 @keyframes ring{0%{transform:translateY(455px) scale(1);opacity:0}15%,85%{opacity:.6}100%{transform:translateY(52px) scale(.4);opacity:0}}
 .lamp{fill:#ff4fa3;animation:lamp 3.2s steps(1) infinite}.l1{animation-delay:-.8s}.l2{animation-delay:-1.6s}.l3{animation-delay:-2.4s}
@@ -300,11 +341,8 @@ ${COWS.map(cowStyle).join('')}
 
 const DEFS = `
 <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--sky0)"/><stop offset=".6" style="stop-color:var(--sky1)"/><stop offset="1" style="stop-color:var(--sky2)"/></linearGradient>
-<linearGradient id="ray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b6ff8a" stop-opacity=".6"/><stop offset="1" stop-color="#b6ff8a" stop-opacity=".05"/></linearGradient>
-<linearGradient id="core" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6ffdf" stop-opacity=".55"/><stop offset="1" stop-color="#f6ffdf" stop-opacity="0"/></linearGradient>
 <linearGradient id="trail" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient>
-<linearGradient id="hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#d9d3f7"/><stop offset="1" stop-color="#a79fdb"/></linearGradient>
-<linearGradient id="bowl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8f86c9"/><stop offset="1" stop-color="#4f477f"/></linearGradient>
+${SAUCERS.map(saucerDefs).join('')}
 <linearGradient id="dome" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2fcff" stop-opacity=".9"/><stop offset="1" stop-color="#7fdfff" stop-opacity=".5"/></linearGradient>
 `
 
@@ -326,20 +364,21 @@ const ORB = `
 </g></g>
 `
 
-const UFO = `
-<g class="ufo" transform="translate(-600,-260)"><g class="hover">
-<g class="beam"><polygon points="-30,36 30,36 86,470 -86,470" fill="url(#ray)"/><polygon points="-14,36 14,36 40,470 -40,470" fill="url(#core)"/>${ring('')}${ring('r2')}${ring('r3')}</g>
-<ellipse cy="40" rx="26" ry="5" fill="#fff7a8"/>
-<path d="M-88,6 C-74,50 74,50 88,6Z" fill="url(#bowl)"/>
+const saucer = s => `
+<g class="w${s.id}" transform="translate(-600,-260)"><g class="hover" style="animation-duration:${s.bob}s">
+<g class="beam b${s.id}"><polygon points="-30,36 30,36 86,470 -86,470" fill="url(#ray${s.id})"/><polygon points="-14,36 14,36 40,470 -40,470" fill="url(#core${s.id})"/>${ring(s, '')}${ring(s, 'r2')}${ring(s, 'r3')}</g>
+<ellipse cy="40" rx="26" ry="5" fill="${s.glow}"/>
+<path d="M-88,6 C-74,50 74,50 88,6Z" fill="url(#bowl${s.id})"/>
 ${lamps}
-<ellipse cy="5" rx="88" ry="17" fill="url(#hull)" stroke="#5d5599" stroke-opacity=".45" stroke-width="1.5"/>
+<ellipse cy="5" rx="88" ry="17" fill="url(#hull${s.id})" stroke="${s.rim}" stroke-opacity=".45" stroke-width="1.5"/>
 <ellipse cy="1" rx="60" ry="8" fill="#fff" opacity=".35"/>
-<ellipse cy="-5" rx="42" ry="8" fill="#6f67b0"/>
-<g transform="translate(0,-22)"><ellipse rx="15" ry="14" fill="#3ddc84"/>${pilotEye(-1)}${pilotEye(1)}<path d="M-4,7 Q0,10 4,7" fill="none" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/></g>
+<ellipse cy="-5" rx="42" ry="8" fill="${s.collar}"/>
+<g transform="translate(0,-22)"><ellipse rx="15" ry="14" fill="${s.pilot}"/>${pilotEye(-1)}${pilotEye(1)}<path d="M-4,7 Q0,10 4,7" fill="none" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/></g>
 <path d="M-40,-5 C-40,-58 40,-58 40,-5Z" fill="url(#dome)" stroke="#fff" stroke-opacity=".6" stroke-width="1.5"/>
 <path d="M-29,-22 C-26,-36 -16,-43 -6,-45" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/>
-<line y1="-45" y2="-60" stroke="#8f86c9" stroke-width="3"/><circle class="lamp l2" cy="-63" r="4.5"/>
-</g></g>
-`
+<line y1="-45" y2="-60" stroke="${s.bowl[0]}" stroke-width="3"/><circle class="lamp l2" cy="-63" r="4.5"/>
+</g></g>`
 
-export const SCENE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><style>${STYLE}</style><defs>${DEFS}</defs>${SKY}${ORB}<path d="M0,760 C300,690 500,740 800,770 C1100,800 1350,700 1600,740 V900 H0Z" style="fill:var(--hill0)"/><path d="M0,800 C200,720 420,720 640,790 C820,845 980,760 1150,755 C1320,750 1480,790 1600,770 V900 H0Z" style="fill:var(--hill1)"/>${HERD}${UFO}</svg>`
+const FLEET = SAUCERS.map(saucer).join('')
+
+export const SCENE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><style>${STYLE}</style><defs>${DEFS}</defs>${SKY}${ORB}<path d="M0,760 C300,690 500,740 800,770 C1100,800 1350,700 1600,740 V900 H0Z" style="fill:var(--hill0)"/><path d="M0,800 C200,720 420,720 640,790 C820,845 980,760 1150,755 C1320,750 1480,790 1600,770 V900 H0Z" style="fill:var(--hill1)"/>${HERD}${FLEET}</svg>`

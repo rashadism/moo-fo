@@ -64,7 +64,7 @@ export const register: Register = on => {
     return (
       <Svg
         source={SCENE}
-        alt="Cows wander a hill under a smiling sun or moon while a flying saucer now and then beams one up"
+        alt="Cows wander a hill under a smiling sun or moon while two flying saucers now and then beam one up"
         isInteractive
       />
     )

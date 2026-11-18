@@ -2,7 +2,7 @@
 
 A theme for the Claude desktop and mobile apps. Deep violet panels, hot pink and cyan accents, and a backdrop that moves.
 
-A small herd of cows grazes on a hill, wandering in and out of view. Now and then a flying saucer drifts in, picks one, beams it up spinning and kicking, and leaves. A new cow strolls in later. The whole thing runs on a two-minute loop under a smiling moon and twinkling stars.
+A small herd of cows grazes on a hill, wandering in and out of view. Now and then one of two flying saucers drifts in, picks a cow, beams it up spinning and kicking, and leaves. Sometimes both are at work at once. A new cow strolls in later. The whole thing runs on a two-minute loop under a smiling moon and twinkling stars.
 
 In light mode the moon becomes a sun and the sky turns blue. The scene follows the system's light or dark setting and stops moving when reduced motion is on.
 

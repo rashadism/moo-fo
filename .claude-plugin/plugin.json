@@ -1,7 +1,7 @@
 {
   "name": "moo-fo",
-  "version": "0.3.0",
-  "description": "A neon night theme with a moving backdrop: cows wander a hill and a flying saucer now and then beams one up.",
+  "version": "0.4.0",
+  "description": "A neon night theme with a moving backdrop: cows wander a hill and two flying saucers now and then beam one up.",
   "author": { "name": "rashadism" },
   "license": "MIT"
 }
