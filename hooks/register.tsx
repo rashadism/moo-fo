@@ -3,7 +3,7 @@ import type { Register, ThemeSetArgs } from 'claude-code'
 import { makeColors } from './make-colors.js'
 import { SCENE } from './scene.js'
 
-const { theme, problems } = makeColors({
+const { theme } = makeColors({
   label: 'Moo-FO',
   roles: { accent: '#ff4fa3', danger: '#ff5a5f', success: '#3ddc84', warning: '#ffb020', pro: '#3fd0ff' },
   light: {
@@ -40,16 +40,7 @@ const LOOK: ThemeSetArgs = {
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
-    const unpainted = problems.find(line => line.startsWith("Desktop won't paint"))
-
-    if (unpainted !== undefined) {
-      $.ui.toast(unpainted)
-    }
-    const set = await $.theme.set(LOOK)
-
-    if (!set.isDrawn) {
-      $.ui.status(set.reason)
-    }
+    await $.theme.set(LOOK)
 
     return next(e)
   })
