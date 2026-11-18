@@ -1,7 +1,7 @@
 {
   "name": "moo-fo",
-  "version": "0.2.1",
-  "description": "A neon night theme with a moving backdrop: a flying saucer abducts a spinning cow under a glowing sun or moon.",
+  "version": "0.3.0",
+  "description": "A neon night theme with a moving backdrop: cows wander a hill and a flying saucer now and then beams one up.",
   "author": { "name": "rashadism" },
   "license": "MIT"
 }
